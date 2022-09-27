@@ -21,6 +21,7 @@ pytest-mock = "3.7.0"
 typed-ast = "^1.5.2"
 click = "8.0.2"
 black = "22.3.0"
+requests = "^2.28.1"
 
 [tool.isort]
 extend_skip = ["helpers", "tokenizer", "postman", "corrector", "model"]
