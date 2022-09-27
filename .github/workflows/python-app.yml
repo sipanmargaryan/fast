@@ -16,7 +16,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install black isort
-    - name: Lint with blake
+    - name: Lint with black
       run: |
         black . --check
         isort . -c --profile black
