@@ -52,6 +52,5 @@ jobs:
           HASURA_TOKEN: ${{ secrets.HASURA_TOKEN }}
           HASURA_URL: ${{ secrets.HASURA_URL }}
         run: |
-          source .venv/bin/activate
           poetry run pytest
           poetry run pytest --cov-report term --cov-fail-under=90
