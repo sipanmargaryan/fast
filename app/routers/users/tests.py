@@ -26,13 +26,12 @@ def test_users_vector_success(monkeypatch):
 
 def test_users_vector_error():
     data = {"user_id": 24, "content_id": 24, "update_type": "post"}
-    response = client.post('/users/update-user-vector', data=json.dumps(data))
+    response = client.post('users/update-user-vector', data=json.dumps(data))
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
 def test_users_vector_invalid_data():
     data = {"user_id": 4, "content_id": "invalid", "update_type": "post"}
-    assert client.base_url == ""
     response = client.post('users/update-user-vector', data=json.dumps(data))
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     data = response.json()
