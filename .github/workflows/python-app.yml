@@ -4,18 +4,15 @@ on:
   pull_request:
     branches: [ "develop", "master" ]
 
-permissions:
-  contents: read
-
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - name: Set up Python 3.10
+    - name: Set up Python 3.9
       uses: actions/setup-python@v3
       with:
-        python-version: 3.10
+        python-version: 3.9
     - name: Install dependencies
       run: |
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
@@ -39,6 +36,7 @@ jobs:
         with:
           virtualenvs-create: true
           virtualenvs-in-project: true
+          installer-parallel: true
       
       - name: Load cached venv
         id: cached-poetry-dependencies
@@ -52,5 +50,6 @@ jobs:
         
       - name: Test with pytest
         run: |
+          source .venv/bin/activate
           poetry run pytest -x -vvv --pdb
           poetry run pytest --cov-report term --cov-fail-under=90
