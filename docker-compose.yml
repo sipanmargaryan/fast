@@ -1,0 +1,16 @@
+version: "3.7"
+
+services:
+  ml-assistant:
+    container_name: hs-ml-assistant
+    image: hs-ml
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 3 --reload
+    ports:
+      - 8000:8000
+    volumes:
+      - .:/app
+    env_file:
+      - .env

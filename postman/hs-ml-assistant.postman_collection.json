@@ -1,0 +1,86 @@
+{
+	"info": {
+		"_postman_id": "cc6c54e5-95a3-4090-835b-f2526f50867a",
+		"name": "hs-ml-assistant",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "3229808"
+	},
+	"item": [
+		{
+			"name": "users",
+			"item": [
+				{
+					"name": "Update User Vector",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user_id\": \"5e0ede94-02e3-52bd-b628-0033fc173f05\",\n    \"content_id\": \"b19e3780-9281-4975-9a24-7efc0dc52aca\",\n    \"update_type\": \"vote\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/users/update-user-vector",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"users",
+								"update-user-vector"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Generate User Vector",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"categories\": [\"Comics & Animation\", \"Business & Industrial\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/users/generate-user-vector",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"users",
+								"generate-user-vector"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Health check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{HOST}}/health",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"health"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

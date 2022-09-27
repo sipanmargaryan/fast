@@ -1,0 +1,33 @@
+[tool.poetry]
+name = "hs-ml"
+version = "0.1.0"
+description = ""
+authors = []
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.11"
+python-dotenv = "^0.20.0"
+python-json-logger = "2.0.4"
+fastapi = "^0.79.1"
+gunicorn = "^20.1.0"
+uvicorn = "^0.18.2"
+numpy = "1.23.2"
+
+[tool.poetry.dev-dependencies]
+pytest = "7.0.1"
+pytest-cov = "3.0.0"
+pytest-sugar = "0.9.4"
+pytest-mock = "3.7.0"
+typed-ast = "^1.5.2"
+click = "8.0.2"
+black = "22.3.0"
+
+[tool.isort]
+extend_skip = ["helpers", "tokenizer", "postman", "corrector", "model"]
+
+[tool.black]
+extend_exclude = ["helpers", "tokenizer", "postman", "corrector", "model"]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
