@@ -30,11 +30,11 @@ def test_users_vector_error():
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
-# def test_users_vector_invalid_data():
-#     data = {"user_id": 4, "content_id": "invalid", "update_type": "post"}
-#     response = client.post('users/update-user-vector', data=json.dumps(data))
-#     assert response.status_code == status.HTTP_400_BAD_REQUEST
-#     assert response.json() == {"detail": "User not found!"}
+def test_users_vector_invalid_data():
+    data = {"user_id": 4, "content_id": "invalid", "update_type": "post"}
+    response = client.post('users/update-user-vector', data=json.dumps(data))
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.json() == {"detail": "User not found!"}
 
 
 def test_generate_user_vector():
