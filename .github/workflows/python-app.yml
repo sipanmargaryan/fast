@@ -15,7 +15,7 @@ jobs:
         python-version: 3.9
     - name: Install dependencies
       run: |
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        python -m pip install black isort
     - name: Lint with blake
       run: |
         black . --check
@@ -36,6 +36,13 @@ jobs:
         with:
           virtualenvs-create: true
           virtualenvs-in-project: true
+          
+      - name: Load cached venv
+        id: cached-poetry-dependencies
+        uses: actions/cache@v2
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
           
       - name: Install dependencies
         run: poetry install --no-interaction
