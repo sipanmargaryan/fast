@@ -34,8 +34,7 @@ def test_users_vector_invalid_data():
     data = {"user_id": 4, "content_id": "invalid", "update_type": "post"}
     response = client.post('users/update-user-vector', data=json.dumps(data))
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    data = response.json()
-    assert data["detail"] == "User not found!"
+    assert response.json() == {"detail": "User not found!"}
 
 
 def test_generate_user_vector():
