@@ -2,7 +2,7 @@ name: CD development
 on:
   pull_request:
     branches:
-      - develop
+      - master
     types:
       - closed
 jobs:
