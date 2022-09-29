@@ -1,4 +1,4 @@
-FROM eu.gcr.io/hoory-development/ack:python3.9-slim-buster
+FROM python:3.9-slim
 
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
