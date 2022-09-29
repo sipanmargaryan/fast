@@ -56,4 +56,60 @@ jobs:
       - name: Move cache
         run: |
           rm -rf /tmp/.buildx-cache
+    
+  cd-development:
+    name: CD development
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    needs:
+      - build-image
 
+    env:
+      SERVICE_NAME: ${{ secrets.SERVICE_NAME }}
+      GITHUB_PAT: ${{ secrets.HOORY_GITHUB_PAT }}
+      TARGET_ENVIRONMENT: development
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - uses: chrnorm/deployment-action@releases/v1
+        name: Create GitHub deployment
+        id: deployment
+        with:
+          token: "${{ env.GITHUB_PAT }}"
+          environment: "${{ env.TARGET_ENVIRONMENT }}"
+
+      - name: Extract image name and tag
+        id: image
+        run: |
+          echo "::set-output name=tag::$(echo $GITHUB_SHA | head -c7)"
+          echo "::set-output name=repository::$(echo "eu.gcr.io/$PROJECT_ID/$SERVICE_NAME/$TARGET_ENVIRONMENT")"
+
+      - name: Set chart app version
+        run: |
+          sed -i "s/^appVersion:.*$/appVersion: ${{ steps.image.outputs.tag }}/" .charts/Chart.yaml
+
+      - name: Upgrade chart
+        run: |
+          helm upgrade $SERVICE_NAME ./.charts \
+          --install \
+          --namespace $GKE_NAMESPACE --create-namespace \
+          --set image.repository="${{ steps.image.outputs.repository }}" \
+          --set image.tag="${{ steps.image.outputs.tag }}" \
+  
+      - name: Update deployment status (success)
+        if: success()
+        uses: chrnorm/deployment-status@releases/v1
+        with:
+          token: "${{ env.GITHUB_PAT }}"
+          state: "success"
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+
+      - name: Update deployment status (failure)
+        if: failure()
+        uses: chrnorm/deployment-status@releases/v1
+        with:
+          token: "${{ env.GITHUB_PAT }}"
+          state: "failure"
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
