@@ -3,8 +3,7 @@ on:
   pull_request:
     branches:
       - master
-    types:
-      - closed
+      
 jobs:
   build-image:
     name: Build Image
@@ -30,7 +29,7 @@ jobs:
         id: image
         run: |
           echo "::set-output name=tag::$(echo $GITHUB_SHA | head -c7)"
-          echo "::set-output name=repository::$(echo "eu.gcr.io/$DOCKER_HUB_USERNAME/$SERVICE_NAME/$TARGET_ENVIRONMENT")"
+          echo "::set-output name=repository::$(echo "docker.io/$DOCKER_HUB_USERNAME/$SERVICE_NAME/$TARGET_ENVIRONMENT")"
       - name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@master
