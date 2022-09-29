@@ -2,7 +2,7 @@ name: Hs ml
 
 on:
   pull_request:
-    branches: [ "develop", "master" ]
+    branches: [ "develop" ]
 
 jobs:
   linting:
