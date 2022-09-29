@@ -1,0 +1,58 @@
+name: CD development
+on:
+  pull_request:
+    branches:
+      - develop
+    types:
+      - closed
+jobs:
+  build-image:
+    name: Build Image
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+
+    env:
+      DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      SERVICE_NAME: ${{ secrets.SERVICE_NAME }}
+      TARGET_ENVIRONMENT: development
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      - name: Extract image name and tag
+        id: image
+        run: |
+          echo "::set-output name=tag::$(echo $GITHUB_SHA | head -c7)"
+          echo "::set-output name=repository::$(echo "eu.gcr.io/$DOCKER_HUB_USERNAME/$SERVICE_NAME/$TARGET_ENVIRONMENT")"
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@master
+
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-single-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-single-buildx
+      - name: Build and push the image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: "${{ steps.image.outputs.repository }}:${{ steps.image.outputs.tag }}"
+          file: ./Dockerfile
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
+
+      - name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+
