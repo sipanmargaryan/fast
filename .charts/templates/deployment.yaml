@@ -3,7 +3,6 @@ kind: Deployment
 metadata:
   name: {{ .Values.global.name }}
   namespace: {{ .Release.Namespace }}
-type: kubernetes.io/dockerconfigjson
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -21,4 +20,4 @@ spec:
         ports:
           - containerPort: 80
       imagePullSecrets:
-        - name: fastapilogin
+      - name: fastapilogin
