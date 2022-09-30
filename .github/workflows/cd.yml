@@ -69,6 +69,7 @@ jobs:
       SERVICE_NAME: ${{ secrets.SERVICE_NAME }}
       GITHUB_PAT: ${{ secrets.HOORY_GITHUB_PAT }}
       DIGITAL_NAMESPACE: ${{ secrets.DIGITAL_NAMESPACE }}
+      DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
       TARGET_ENVIRONMENT: development
 
     steps:
