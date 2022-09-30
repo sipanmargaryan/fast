@@ -67,7 +67,7 @@ jobs:
 
     env:
       SERVICE_NAME: ${{ secrets.SERVICE_NAME }}
-      GITHUB_PAT: ${{ secrets.HOORY_GITHUB_PAT }}
+      GITHUB_PAT: ${{ secrets.PERSONAL_GITHUB_PAT }}
       DIGITAL_NAMESPACE: ${{ secrets.DIGITAL_NAMESPACE }}
       TARGET_ENVIRONMENT: development
 
