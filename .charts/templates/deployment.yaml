@@ -4,16 +4,14 @@ metadata:
   name: {{ .Values.global.name }}
   namespace: {{ .Release.Namespace }}
 spec:
-  {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
-  {{- end }}
   selector:
     matchLabels:
       app: {{ .Values.global.name }}
   template:
     metadata:
       labels:
-        app: { { .Values.global.name } }
+        app: {{ .Values.global.name }}
         version: "{{ .Values.image.tag }}"
     spec:
       containers:
@@ -21,15 +19,3 @@ spec:
         name: {{ .Values.global.name }}
         ports:
           - containerPort: 80
-        env:
-        {{- range $k, $v := .Values.env }}
-          - name: {{ $k }}
-            value: {{ $v | quote }}
-        {{- end }}
-        {{- range $k, $v := .Values.secret }}
-          - name: {{ $k }}
-            valueFrom:
-              secretKeyRef:
-                name: {{ $.Values.global.name }}
-                key: {{ $k }}
-        {{- end }}
