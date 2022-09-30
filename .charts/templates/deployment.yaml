@@ -19,3 +19,5 @@ spec:
         name: {{ .Values.global.name }}
         ports:
           - containerPort: 80
+      imagePullSecrets:
+        - name: fast
