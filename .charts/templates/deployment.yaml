@@ -4,6 +4,9 @@ metadata:
   name: {{ .Values.global.name }}
   namespace: {{ .Release.Namespace }}
 spec:
+  securityContext:
+    runAsUser: 1001
+    rusAsGroup: 0
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
@@ -20,4 +23,4 @@ spec:
         ports:
           - containerPort: 80
       imagePullSecrets:
-      - name: fastapilogin
+      - name: fastapilogin # 1. docker login 2.kubectl create secret docker-registry fastapilogin --namespace=pod_namespace_name --from-file=.dockerconfigjson=/home/sipan/.docker/config.json
