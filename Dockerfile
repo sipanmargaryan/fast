@@ -14,10 +14,6 @@ RUN pip3 --no-cache-dir install -r requirements.txt
 RUN poetry config virtualenvs.create false
 RUN poetry install --no-dev
 
-RUN chown -R 1001:1001 /app
-
-USER 1001
-
 ADD . /app/
 
 EXPOSE 80
