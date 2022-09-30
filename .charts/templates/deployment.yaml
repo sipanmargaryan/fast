@@ -4,9 +4,6 @@ metadata:
   name: {{ .Values.global.name }}
   namespace: {{ .Release.Namespace }}
 spec:
-  securityContext:
-    runAsUser: 1001
-    rusAsGroup: 0
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
@@ -17,6 +14,9 @@ spec:
         app: {{ .Values.global.name }}
         version: "{{ .Values.image.tag }}"
     spec:
+      securityContext:
+        runAsUser: 1001
+        rusAsGroup: 0
       containers:
       - image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         name: {{ .Values.global.name }}
