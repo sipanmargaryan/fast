@@ -1,12 +1,12 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: { { .Values.global.name } }
-  namespace: { { .Release.Namespace } }
+  name: {{ .Values.global.name }}
+  namespace: {{ .Release.Namespace }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
-  {{ - end }}
+  {{- end }}
   selector:
     matchLabels:
       app: {{ .Values.global.name }}
