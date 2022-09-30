@@ -32,6 +32,7 @@ jobs:
         run: |
           echo "::set-output name=tag::$(echo $GITHUB_SHA | head -c7)"
           echo "::set-output name=repository::$(echo "$DOCKER_HUB_USERNAME/$SERVICE_NAME-$TARGET_ENVIRONMENT")"
+          
       - name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@master
@@ -67,11 +68,20 @@ jobs:
     env:
       SERVICE_NAME: ${{ secrets.SERVICE_NAME }}
       GITHUB_PAT: ${{ secrets.HOORY_GITHUB_PAT }}
+      DIGITAL_NAMESPACE: ${{ secrets.DIGITAL_NAMESPACE }}
       TARGET_ENVIRONMENT: development
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
+      
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITAL_ACCESS_TOKEN }}
+      
+      - name: Save DigitalOcean kubeconfig
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 fast # fast is cluster name
 
       - uses: chrnorm/deployment-action@releases/v1
         name: Create GitHub deployment
@@ -84,7 +94,7 @@ jobs:
         id: image
         run: |
           echo "::set-output name=tag::$(echo $GITHUB_SHA | head -c7)"
-          echo "::set-output name=repository::$(echo "eu.gcr.io/$PROJECT_ID/$SERVICE_NAME/$TARGET_ENVIRONMENT")"
+          echo "::set-output name=repository::$(echo "$DOCKER_HUB_USERNAME/$SERVICE_NAME-$TARGET_ENVIRONMENT")"
 
       - name: Set chart app version
         run: |
@@ -94,7 +104,7 @@ jobs:
         run: |
           helm upgrade $SERVICE_NAME ./.charts \
           --install \
-          --namespace $GKE_NAMESPACE --create-namespace \
+          --namespace $DIGITAL_NAMESPACE --create-namespace \
           --set image.repository="${{ steps.image.outputs.repository }}" \
           --set image.tag="${{ steps.image.outputs.tag }}" \
   
