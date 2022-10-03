@@ -15,9 +15,21 @@ spec:
         version: "{{ .Values.image.tag }}"
     spec:
       containers:
-      - image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        name: {{ .Values.global.name }}
-        ports:
-          - containerPort: 80
+        - image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          name: {{ .Values.global.name }}
+          env:
+          {{- range $k, $v := .Values.env }}
+            - name: {{ $k }}
+              value: {{ $v | quote }}
+          {{- end }}
+          {{- range $k, $v := .Values.secret }}
+            - name: { { $k } }
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.global.name }}
+                  key: {{ $k }}
+          {{- end }}
+          ports:
+            - containerPort: 80
       imagePullSecrets:
       - name: fastapilogin # 1. docker login 2.kubectl create secret docker-registry fastapilogin --namespace=pod_namespace_name --from-file=.dockerconfigjson=/home/sipan/.docker/config.json
