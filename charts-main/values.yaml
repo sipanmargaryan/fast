@@ -1,0 +1,132 @@
+global:
+  name: assistant-conductor
+
+autoscaling:
+  enabled: false
+  props: {}
+
+nodeSelector:
+  enabled: false
+  props: {}
+
+replicaCount: 2
+
+image:
+  repository: notSet
+  tag: notSet
+
+resources:
+  requests:
+    cpu: 500m
+    memory: 500Mi
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+
+vService:
+  hosts:
+    - "assistant-conductor-service"
+
+volumes:
+  - name: assistant-conductor-kit-gcloud-sa-key
+    secret:
+      secretName: assistant-conductor-kit-gcloud-sa-key
+  - name: assistant-conductor-kit-github-token
+    secret:
+      secretName: assistant-conductor-kit-github-token
+volumeMounts:
+  - name: assistant-conductor-kit-gcloud-sa-key
+    mountPath: /var/secrets/google
+  - name: assistant-conductor-kit-github-token
+    mountPath: /var/secrets/github
+
+env:
+  # Application
+  GRPC_SERVER_ENV: "development"
+  GRPC_SERVER_PORT: "5000"
+  # gRPC
+  GRPC_POLL_STRATEGY: "poll"
+  GRPC_ENABLE_FORK_SUPPORT: "0"
+  # Assistant conductor kit
+  ASSISTANT_CONDUCTOR_KIT_PATH: "node_modules/@hoory-com/assistant-conductor-kit/ack"
+  ASSISTANT_CONDUCTOR_KIT_GCP_CREDENTIALS_PATH: "/var/secrets/google/key.json"
+  ASSISTANT_CONDUCTOR_KIT_GITHUB_TOKEN_PATH: "/var/secrets/github/token.txt"
+  # Assistant specification
+  ASSISTANT_SPEC_K8S_CLUSTER_NAME: "hoory-cluster"
+  ASSISTANT_SPEC_K8S_CLUSTER_ZONE: "europe-west1-b"
+  ASSISTANT_SPEC_HOST: "assistant.hoory.cloud"
+  ASSISTANT_SPEC_DATA_PLANE_NAMESPACE: "hoory-rasa-dp"
+  ASSISTANT_SPEC_CONTROL_PLANE_DB_INSTANCE_NAME: "rasa-cp-postgres-4f4168ab"
+  ASSISTANT_SPEC_INIT_REPO_NAME: "hoory-com/rasa-init-repo"
+  ASSISTANT_SPEC_REPO_OWNER: "hoory-dev-bot"
+
+secret:
+  # Redis
+  GRPC_SERVER_REDIS_URL: "redis://localhost:6379/0"
+  # Celery
+  CELERY_BROKER_URL: "redis://localhost:6379/15"
+  CELERY_RESULT_BACKEND: "redis://localhost:6379/15"
+
+worker:
+  replicaCount: 2
+
+  image:
+    repository: notSet
+    tag: notSet
+
+  volumes:
+    - name: assistant-conductor-kit-gcloud-sa-key
+      secret:
+        secretName: assistant-conductor-kit-gcloud-sa-key
+    - name: assistant-conductor-kit-github-token
+      secret:
+        secretName: assistant-conductor-kit-github-token
+  volumeMounts:
+    - name: assistant-conductor-kit-gcloud-sa-key
+      mountPath: /var/secrets/google
+    - name: assistant-conductor-kit-github-token
+      mountPath: /var/secrets/github
+
+  env:
+    # Application
+    WORKER_ENV: "development"
+    # Task specification
+    WORKER_TASK_SPEC_CREATE_PROJECT_RATE_LIMIT: "10/m"
+    WORKER_TASK_SPEC_CREATE_PROJECT_SOFTTIME_LIMIT: "600"
+    WORKER_TASK_SPEC_CREATE_PROJECT_TIME_LIMIT: "600"
+    # WORKER_TASK_SPEC_DEFAULT
+    WORKER_TASK_SPEC_DEFAULT_SOFTTIME_LIMIT: "120"
+    WORKER_TASK_SPEC_DEFAULT_TIME_LIMIT: "120"
+    WORKER_TASK_SPEC_DEFAULT_MAX_RETRIES: "3"
+    # WORKER_TASK_SPEC_CHART
+    WORKER_TASK_SPEC_CHART_SOFTTIME_LIMIT: "300"
+    WORKER_TASK_SPEC_CHART_TIME_LIMIT: "300"
+    WORKER_TASK_SPEC_CHART_MAX_RETRIES: "3"
+    # Celery
+    C_FORCE_ROOT: "true"
+    CELERY_APPS: "celery_.tasks"
+    CELERYD_CONCURRENCY: "4"
+    # Assistant conductor kit
+    ASSISTANT_CONDUCTOR_KIT_PATH: "node_modules/@hoory-com/assistant-conductor-kit/ack"
+    ASSISTANT_CONDUCTOR_KIT_GCP_CREDENTIALS_PATH: "/var/secrets/google/key.json"
+    ASSISTANT_CONDUCTOR_KIT_GITHUB_TOKEN_PATH: "/var/secrets/github/token.txt"
+    # Assistant specification
+    ASSISTANT_SPEC_K8S_CLUSTER_NAME: "hoory-cluster"
+    ASSISTANT_SPEC_K8S_CLUSTER_ZONE: "europe-west1-b"
+    ASSISTANT_SPEC_HOST: "assistant.hoory.cloud"
+    ASSISTANT_SPEC_DATA_PLANE_NAMESPACE: "hoory-rasa-dp"
+    ASSISTANT_SPEC_CONTROL_PLANE_DB_INSTANCE_NAME: "rasa-cp-postgres-4f4168ab"
+    ASSISTANT_SPEC_INIT_REPO_NAME: "hoory-com/rasa-init-repo"
+    ASSISTANT_SPEC_REPO_OWNER: "hoory-dev-bot"
+
+  secret:
+    # Redis
+    WORKER_SERVER_REDIS_URL: "redis://localhost:6379/1"
+    # Celery
+    CELERY_BROKER_URL: "redis://localhost:6379/15"
+    CELERY_RESULT_BACKEND: "redis://localhost:6379/15"
+
+redis:
+  architecture: "standalone"
+  auth:
+    password: "password"
