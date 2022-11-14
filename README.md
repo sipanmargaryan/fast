@@ -1,9 +1,4 @@
-<p align="center">
-   <img src="https://avatars.githubusercontent.com/u/85837820?s=200&v=4?v=1615277229" alt="hoory-logo" width="200px" height="200px"/>
-  <br>
-  <b>Hoory Social ML</b>
-  <br>
-</p>
+
 
 ## Setup
 
